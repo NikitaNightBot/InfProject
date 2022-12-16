@@ -58,6 +58,9 @@ def main():
             cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
             encryptor = cipher.encryptor()
             ct = encryptor.update(bintext) + encryptor.finalize()
+            
+            # * Decrypt the encrypted text to check if the encryption worked correctly
+            
             decryptor = cipher.decryptor()
             dt = decryptor.update(ct) + decryptor.finalize()
 
