@@ -1,10 +1,13 @@
-import hashlib
-import pyperclip
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+import hashlib # * For generating hash
+import pyperclip # * For copying encrypted data to clipboard
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes # * To implement AES-256-CBC encryption
+# * To generate random key and initialization vector
 import string
 import random
 
 def main():
+    # * Command line interface choose option via ``match: case:`` structure
+    
     match int(input("""
 [1] Hash
 [2] Encryption (AES-256)
@@ -17,10 +20,12 @@ def main():
 [String] Hash a string (text input)
 """)).lower():
                 case "file":
-                    pyperclip.copy(getattr(hashlib, input(f'Available algorithms: {hashlib.algorithms_available}\n'))(
+                    # * User gets to choose from available algorithms, then inputs the file path, hashed contents of the file get copied to clipboard
+                    pyperclip.copy(getattr(hashlib, input(f'Choose from available algorithms: {hashlib.algorithms_available}\n'))(
                 open(f'{(str(input("Enter file path: ")))}', 'r').read().encode('utf-8')).hexdigest())
                 case "string":
-                    pyperclip.copy(getattr(hashlib, input(f'Available algorithms: {hashlib.algorithms_available}\n'))(
+                    # * User gets to choose from available algorithms, then inputs the string, hashed string gets copied to clipboard
+                    pyperclip.copy(getattr(hashlib, input(f'Choose from available algorithms: {hashlib.algorithms_available}\n'))(
                 str(input("Enter string: ")).encode('utf-8')).hexdigest())
             print("Hash succesfully copied to clipboard.")
         case 2:
@@ -37,6 +42,9 @@ def main():
             # * The message its going to encrypt
 
             bintext = str(input("Plaintext: "))
+            
+            # * Padding
+            
             bintext = bintext + (16 - len(bintext) % 16) * " "
             bintext = bintext.encode('utf-8')
 
@@ -54,12 +62,13 @@ def main():
             dt = decryptor.update(ct) + decryptor.finalize()
 
             # * Print encoded text (as hex)
-            # ! For some reason matches only 1/2 of what you'd get at https://www.devglan.com/online-tools/aes-encryption-decryption
+            # ! For some reason matches only 1/2 of what you'd get at https://www.devglan.com/online-tools/aes-encryption-decryption , probally because it counts each character in the key as 8 bits instead of 6.
 
             print(f"Encrypted text (hex): {ct.hex()}")
-            print(f"Selfencrypt -> selfdecrypt text: {dt.decode().rstrip()}")
+            print(f"Selfencrypt -> selfdecrypt text: {dt.decode().rstrip()}") # * .rstrip() to unpad
         case _:
             exit()
 
 if __name__ == '__main__':
     main()
+    
